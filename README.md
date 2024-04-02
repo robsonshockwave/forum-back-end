@@ -10,7 +10,7 @@ Design dirigido à domínio
 
 - Usuário
 
-  - Client
+  - Cliente
   - Fornecedor
   - Atendente
   - Barman
