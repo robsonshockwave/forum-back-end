@@ -9,6 +9,7 @@ interface QuestionProps {
 }
 
 export class Question extends Entity<QuestionProps> {
+  // a classe Entity já está fazendo isso
   //   constructor(props: QuestionProps, id?: string) {
   //     super(props, id);
   //   }

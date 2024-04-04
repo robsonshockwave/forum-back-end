@@ -11,6 +11,7 @@ export class Answer extends Entity<AnswerProps> {
     return this.props.content;
   }
 
+  // a classe Entity já está fazendo isso
   //   constructor(props: AnswerProps, id?: string) {
   //     super(props, id);
   //   }
