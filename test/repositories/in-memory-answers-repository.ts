@@ -19,4 +19,10 @@ export class InMemoryAnswersRepository implements AnswersRepository {
       (a) => a.id.toString() !== answer.id.toString()
     );
   }
+
+  async save(answer: Answer) {
+    this.answers = this.answers.map((a) =>
+      a.id.toString() === answer.id.toString() ? answer : a
+    );
+  }
 }
