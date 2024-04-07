@@ -29,4 +29,10 @@ export class InMemoryQuestionsRepository implements QuestionsRepository {
       (q) => q.id.toString() !== question.id.toString()
     );
   }
+
+  async save(question: Question) {
+    this.questions = this.questions.map((q) =>
+      q.id.toString() === question.id.toString() ? question : q
+    );
+  }
 }
