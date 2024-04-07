@@ -10,7 +10,7 @@ export class InMemoryQuestionCommentsRepository
     this.questionComments.push(questionComment);
   }
 
-  async findyById(id: string) {
+  async findById(id: string) {
     const questionComment = this.questionComments.find(
       (comment) => comment.id.toString() === id.toString()
     );

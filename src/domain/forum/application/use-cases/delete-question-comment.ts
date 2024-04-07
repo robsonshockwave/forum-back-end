@@ -14,7 +14,7 @@ export class DeleteQuestionCommentUseCase {
     authorId,
     questionCommentId,
   }: DeleteQuestionCommentUseCaseRequest): Promise<DeleteQuestionCommentUseCaseResponse> {
-    const questionComment = await this.questionCommentsRepository.findyById(
+    const questionComment = await this.questionCommentsRepository.findById(
       questionCommentId
     );
 
