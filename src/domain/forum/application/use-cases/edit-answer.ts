@@ -1,5 +1,7 @@
+import { Either, left, right } from '@/core/either';
 import { Answer } from '../../enterprise/entities/answer';
 import { AnswersRepository } from '../repositories/answers-repository';
+import { NotAllowedError } from './errors/not-allowed-error';
 
 interface EditAnswerUseCaseRequest {
   authorId: string;
@@ -7,9 +9,12 @@ interface EditAnswerUseCaseRequest {
   answerId: string;
 }
 
-interface EditAnswerUseCaseResponse {
-  answer: Answer;
-}
+type EditAnswerUseCaseResponse = Either<
+  NotAllowedError,
+  {
+    answer: Answer;
+  }
+>;
 
 export class EditAnswerUseCase {
   constructor(private answersRepository: AnswersRepository) {}
@@ -24,12 +29,12 @@ export class EditAnswerUseCase {
     if (!answer) throw new Error('Answer not found');
 
     if (answer.authorId.toString() !== authorId)
-      throw new Error('Unauthorized');
+      return left(new NotAllowedError());
 
     answer.content = content;
 
     await this.answersRepository.save(answer);
 
-    return { answer };
+    return right({ answer });
   }
 }
