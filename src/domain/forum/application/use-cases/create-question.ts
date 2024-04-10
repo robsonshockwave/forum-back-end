@@ -40,7 +40,7 @@ export class CreateQuestionUseCase {
       })
     );
 
-    question.attachments = questionAttachments || [];
+    question.attachments = questionAttachments ?? [];
 
     await this.questionsRepository.create(question);
 
