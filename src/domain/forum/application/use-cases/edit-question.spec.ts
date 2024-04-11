@@ -3,14 +3,22 @@ import { makeQuestion } from 'test/factories/make-question';
 import { EditQuestionUseCase } from './edit-question';
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import { NotAllowedError } from './errors/not-allowed-error';
+import { InMemoryQuestionAttachmentsRepository } from 'test/repositories/in-memory-question-attachments-repository';
+import { makeQuestionAttachment } from 'test/factories/make-question-attachments';
 
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository;
+let inMemoryQuestionAttachmentsRepository: InMemoryQuestionAttachmentsRepository;
 let sut: EditQuestionUseCase;
 
 describe('Edit Question', () => {
   beforeEach(() => {
     inMemoryQuestionsRepository = new InMemoryQuestionsRepository();
-    sut = new EditQuestionUseCase(inMemoryQuestionsRepository);
+    inMemoryQuestionAttachmentsRepository =
+      new InMemoryQuestionAttachmentsRepository();
+    sut = new EditQuestionUseCase(
+      inMemoryQuestionsRepository,
+      inMemoryQuestionAttachmentsRepository
+    );
   });
 
   it('should be able to get to edit a question', async () => {
@@ -23,17 +31,42 @@ describe('Edit Question', () => {
 
     await inMemoryQuestionsRepository.create(newQuestion);
 
+    inMemoryQuestionAttachmentsRepository.items.push(
+      makeQuestionAttachment({
+        questionId: newQuestion.id,
+        attachmentId: new UniqueEntityID('attachment-1'),
+      }),
+      makeQuestionAttachment({
+        questionId: newQuestion.id,
+        attachmentId: new UniqueEntityID('attachment-2'),
+      })
+    );
+
     await sut.execute({
       questionId: newQuestion.id.toString(),
       authorId: 'author-1',
       title: 'New Title',
       content: 'New Content',
+      attachmentsIds: ['attachment-1', 'attachment-3'],
     });
 
     expect(inMemoryQuestionsRepository.questions[0]).toMatchObject({
       title: 'New Title',
       content: 'New Content',
     });
+    expect(
+      inMemoryQuestionsRepository.questions[0].attachments.currentItems
+    ).toHaveLength(2);
+    expect(
+      inMemoryQuestionsRepository.questions[0].attachments.currentItems
+    ).toEqual([
+      expect.objectContaining({
+        attachmentId: new UniqueEntityID('attachment-1'),
+      }),
+      expect.objectContaining({
+        attachmentId: new UniqueEntityID('attachment-3'),
+      }),
+    ]);
   });
 
   it('should not be able to get to edit a question from another user', async () => {
@@ -51,6 +84,7 @@ describe('Edit Question', () => {
       authorId: 'author-2',
       title: 'New Title',
       content: 'New Content',
+      attachmentsIds: [],
     });
 
     expect(result.isLeft()).toBe(true);
