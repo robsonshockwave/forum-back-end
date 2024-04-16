@@ -11,7 +11,7 @@ export abstract class AggregateRoot<Props> extends Entity<Props> {
   }
 
   protected addDomainEvent(domainEvent: DomainEvent): void {
-    // anotar o evento no agregado
+    // anotar o evento
     this._domainEvents.push(domainEvent);
     // marcar o agregado para despacho
     DomainEvents.markAggregateForDispatch(this);
